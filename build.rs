@@ -107,11 +107,6 @@ fn make_source() {
     base_config.include(&libusb_source);
     base_config.include(libusb_source.join("libusb"));
 
-    // Include line numbers for debugging libusb C code when performing debug builds
-    if env::var("PROFILE").unwrap_or(String::new()) == "debug" {
-        base_config.flag("-g");
-    }
-
     // When building libusb from source, allow use of its logging facilities to aid debugging.
     // FIXME: This does not link correctly under MinGW due to a rustc bug, so only do it on MSVC
     // Ref: https://github.com/rust-lang/rust/issues/47048
@@ -126,6 +121,7 @@ fn make_source() {
         link_framework("IOKit");
         link("objc", false);
     }
+
     if cfg!(target_os = "linux") {
         base_config.define("OS_LINUX", Some("1"));
         base_config.define("HAVE_ASM_TYPES_H", Some("1"));
@@ -173,6 +169,11 @@ fn make_source() {
 
         base_config.file(libusb_source.join("libusb/os/poll_posix.c"));
         base_config.file(libusb_source.join("libusb/os/threads_posix.c"));
+
+        // Include line numbers for debugging libusb C code when performing debug builds
+        if env::var("PROFILE").unwrap_or(String::new()) == "debug" {
+            base_config.flag("-g");
+        }
     }
 
     if cfg!(windows) {
