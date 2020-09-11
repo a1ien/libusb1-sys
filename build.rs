@@ -171,6 +171,7 @@ fn make_source() {
         base_config.file(libusb_source.join("libusb/os/threads_posix.c"));
 
         // Include line numbers for debugging libusb C code when performing debug builds
+        base_config.define("ENABLE_LOGGING", Some("1"));
         if env::var("PROFILE").unwrap_or(String::new()) == "debug" {
             base_config.flag("-g");
         }
