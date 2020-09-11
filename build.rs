@@ -73,17 +73,17 @@ fn unpack<R: Read>(data: R, dst: &Path) -> std::io::Result<()> {
 }
 
 fn extract_source() -> PathBuf {
-    use libflate::gzip::Decoder;
-    use std::{fs, io::Cursor};
+    // use libflate::gzip::Decoder;
+    // use std::{fs, io::Cursor};
+    //
+    // let basename = format!("libusb-{}", VERSION);
+    // let filename = format!("libusb/{}.tar.gz", basename);
 
-    let basename = format!("libusb-{}", VERSION);
-    let filename = format!("libusb/{}.tar.gz", basename);
-
-    let mut source_dir = PathBuf::from(env::var("OUT_DIR").unwrap()).join("source");
-    let data = Cursor::new(fs::read(&filename).unwrap());
-    let gz_decoder = Decoder::new(data).unwrap();
-    unpack(gz_decoder, &source_dir).unwrap();
-    source_dir.push(basename);
+    let mut source_dir = PathBuf::from("../libusb");
+    // let data = Cursor::new(fs::read(&filename).unwrap());
+    // let gz_decoder = Decoder::new(data).unwrap();
+    // unpack(gz_decoder, &source_dir).unwrap();
+    // source_dir.push(basename);
     source_dir
 }
 
@@ -130,8 +130,13 @@ fn make_source() {
         base_config.define("USBI_TIMERFD_AVAILABLE", Some("1"));
         base_config.file(libusb_source.join("libusb/os/linux_netlink.c"));
         base_config.file(libusb_source.join("libusb/os/linux_usbfs.c"));
+        base_config.file(libusb_source.join("libusb/os/events_posix.c"));
         base_config.define("POLL_NFDS_TYPE", Some("nfds_t"));
         base_config.define("_GNU_SOURCE", Some("1"));
+        base_config.define("EVENTS_POSIX", Some("1"));
+        base_config.define("HAVE_CLOCK_GETTIME", Some("1"));
+        base_config.define("HAVE_NFDS_T", Some("1"));
+        base_config.define("HAVE_PIPE2", Some("1"));
     }
 
     if cfg!(unix) {
@@ -167,7 +172,6 @@ fn make_source() {
             _ => {}
         };
 
-        base_config.file(libusb_source.join("libusb/os/poll_posix.c"));
         base_config.file(libusb_source.join("libusb/os/threads_posix.c"));
 
         // Include line numbers for debugging libusb C code when performing debug builds
