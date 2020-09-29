@@ -3,7 +3,9 @@
 pub mod constants;
 
 use self::constants::*;
-use libc::{c_char, c_int, c_short, c_uchar, c_uint, c_void, ssize_t, timeval};
+pub use libc::{c_char, c_int, c_long, c_short, c_uchar, c_uint, c_void, ssize_t, timeval, time_t};
+#[cfg(not(windows))]
+pub use libc::suseconds_t;
 
 #[repr(C)]
 pub struct libusb_context {
