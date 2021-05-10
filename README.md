@@ -1,3 +1,5 @@
+## The libusb1-sys crate has been moved into the [rusb](https://github.com/a1ien/rusb) Git repository.
+
 # Libusb Rust Bindings
 
 The `libusb1-sys` crate provides declarations and linkage for the `libusb` C library. Following the
